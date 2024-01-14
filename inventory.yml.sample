@@ -1,0 +1,4 @@
+fruit_machine:
+  hosts:
+    my_server.local:
+      ansible_user: my_user

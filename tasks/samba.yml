@@ -1,0 +1,42 @@
+---
+  - name: Ensure Samba is installed.
+    ansible.builtin.apt:
+      name:
+        - samba
+
+  - name: Ensure Samba user exists.
+    ansible.builtin.user:
+      name: "{{ samba.username }}"
+
+  - name: Ensure backups location exists.
+    ansible.builtin.file:
+      path: "{{ backups_path }}"
+      state: directory
+      owner: "{{ samba.username }}"
+
+  - name: Ensure Samba configuration directory exists.
+    ansible.builtin.file:
+      path: /etc/samba/smb.conf.d
+      state: directory
+
+  - name: Ensure Time Machine Samba config exists.
+    ansible.builtin.template:
+      src: templates/timemachine.j2
+      dest: /etc/samba/smb.conf.d/timemachine.conf
+
+  - name: Ensure Time Machine Samba config is sourced.
+    ansible.builtin.lineinfile:
+      path: /etc/samba/smb.conf
+      line: include = /etc/samba/smb.conf.d/timemachine.conf
+
+  - name: Set Samba user's password.
+    shell: '
+      (echo {{ samba.password }}; echo {{ samba.password }}) |
+      smbpasswd -s -a {{ samba.username }}
+    '
+
+  - name: Forcibly reload the Samba service.
+    ansible.builtin.service:
+      name: smbd
+      state: reloaded
+      enabled: true

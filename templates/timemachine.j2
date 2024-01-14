@@ -1,0 +1,7 @@
+[backups]
+    comment = macOS Backups
+    path = {{ backups_path }}
+    valid users = {{ samba.username }}
+    read only = no
+    vfs objects = catia fruit streams_xattr
+    fruit:time machine = yes

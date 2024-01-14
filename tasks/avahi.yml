@@ -1,0 +1,22 @@
+---
+  - name: Ensure Avahi package is installed.
+    ansible.builtin.apt:
+      name:
+        - avahi-daemon
+
+  - name: Ensure Avahi service is running.
+    ansible.builtin.service:
+      name: avahi-daemon
+      state: started
+      enabled: true
+
+  - name: Configure Avahi to advertise Samba share.
+    ansible.builtin.template:
+      src: templates/avahi-samba.service.j2
+      dest: /etc/avahi/services/samba.service
+
+  # Make this reload conditional.
+  - name: Reload Avahi.
+    ansible.builtin.service:
+      name: avahi-daemon
+      state: reloaded

@@ -1,0 +1,13 @@
+- name: Configure Time Machine target.
+  hosts: fruit_machine
+  become: true
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: Set up Samba.
+      ansible.builtin.import_tasks: tasks/samba.yml
+
+    - name: Set up Avahi.
+      ansible.builtin.import_tasks: tasks/avahi.yml
