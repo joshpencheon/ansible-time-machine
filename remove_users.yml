@@ -1,0 +1,39 @@
+- name: Remove old SMB Time Machine users and data.
+  hosts: fruit_machine
+  become: true
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+  - name: Remove user from Samba.
+    shell: 'smbpasswd -x {{ decomissioned_username }}'
+    ignore_errors: true
+
+  - name: Remove Samba user entirely.
+    ansible.builtin.user:
+      name: "{{ decomissioned_username }}"
+      remove: true
+      state: absent
+
+  - name: Remove user's backups.
+    ansible.builtin.file:
+      path: "{{ backups_path }}/{{ decomissioned_username }}"
+      state: absent
+
+  - name: Ensure Time Machine Samba config is not sourced.
+    ansible.builtin.lineinfile:
+      path: /etc/samba/smb.conf
+      line: "include = /etc/samba/smb.conf.d/timemachine-{{ decomissioned_username }}.conf"
+      state: absent
+
+  - name: Remove Time Machine Samba config.
+    ansible.builtin.file:
+      dest: "/etc/samba/smb.conf.d/timemachine-{{ decomissioned_username }}.conf"
+      state: absent
+
+  - name: Forcibly reload the Samba service.
+    ansible.builtin.service:
+      name: smbd
+      state: reloaded
+      enabled: true
