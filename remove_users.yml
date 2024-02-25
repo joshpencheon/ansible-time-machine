@@ -6,6 +6,11 @@
     - vars.yml
 
   tasks:
+  - name: Ask for confirmation first.
+    pause:
+      prompt: "This will delete {{ decomissioned_username }} and their data! Press <Enter> to proceed, or <Ctrl-c> then <a> to abort"
+      echo: false
+
   - name: Remove user from Samba.
     shell: 'smbpasswd -x {{ decomissioned_username }}'
     ignore_errors: true
