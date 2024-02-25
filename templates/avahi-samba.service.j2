@@ -14,7 +14,9 @@
   <service>
     <type>_adisk._tcp</type>
     <port>9</port>
-    <txt-record>dk0=adVN=backups,adVF=0x82</txt-record>
+    {% for user in users %}
+    <txt-record>dk{{ loop.index0 }}=adVN={{ user.username | capitalize }}'s Time Machine,adVF=0x82</txt-record>
+    {% endfor %}
     <txt-record>sys=adVF=0x100</txt-record>
   </service>
 </service-group>

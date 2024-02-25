@@ -1,5 +1,5 @@
-[{{ item.username }} backups]
-    comment = macOS Backups
+[{{ item.username | capitalize }}'s Time Machine]
+    comment = macOS backups for {{ item.username | capitalize }}
     path = {{ backups_path }}/{{ item.username }}
     valid users = {{ item.username }}
     read only = no
