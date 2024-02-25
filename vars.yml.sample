@@ -1,6 +1,8 @@
 ---
-samba:
-  username: my_samba_username
-  password: my_samba_password
+users:
+  - username: my_samba_username
+    password: my_samba_password
+  - username: my_other_samba_username
+    password: my_other_samba_password
 
 backups_path: /path/to/mounted/disk

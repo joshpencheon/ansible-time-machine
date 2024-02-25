@@ -6,13 +6,25 @@
 
   - name: Ensure Samba user exists.
     ansible.builtin.user:
-      name: "{{ samba.username }}"
+      name: "{{ item.username }}"
+      shell: /sbin/nologin
+      create_home: no
+    loop:
+        "{{ users }}"
 
-  - name: Ensure backups location exists.
+  - name: Ensure backups parent location exists.
     ansible.builtin.file:
       path: "{{ backups_path }}"
       state: directory
-      owner: "{{ samba.username }}"
+      mode: u=rwx,g=rx,o=rx
+
+  - name: Ensure backups location exists.
+    ansible.builtin.file:
+      path: "{{ backups_path }}/{{ item.username }}"
+      state: directory
+      owner: "{{ item.username }}"
+    loop:
+        "{{ users }}"
 
   - name: Ensure Samba configuration directory exists.
     ansible.builtin.file:
@@ -22,18 +34,24 @@
   - name: Ensure Time Machine Samba config exists.
     ansible.builtin.template:
       src: templates/timemachine.j2
-      dest: /etc/samba/smb.conf.d/timemachine.conf
+      dest: "/etc/samba/smb.conf.d/timemachine-{{ item.username }}.conf"
+    loop:
+        "{{ users }}"
 
   - name: Ensure Time Machine Samba config is sourced.
     ansible.builtin.lineinfile:
       path: /etc/samba/smb.conf
-      line: include = /etc/samba/smb.conf.d/timemachine.conf
+      line: "include = /etc/samba/smb.conf.d/timemachine-{{ item.username }}.conf"
+    loop:
+        "{{ users }}"
 
   - name: Set Samba user's password.
     shell: '
-      (echo {{ samba.password }}; echo {{ samba.password }}) |
-      smbpasswd -s -a {{ samba.username }}
+      (echo {{ item.password }}; echo {{ item.password }}) |
+      smbpasswd -s -a {{ item.username }}
     '
+    loop:
+        "{{ users }}"
 
   - name: Forcibly reload the Samba service.
     ansible.builtin.service:
