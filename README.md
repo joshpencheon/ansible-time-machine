@@ -7,7 +7,7 @@ This playbook configures a host for use as a networked Time Machine backup targe
 First, set up `inventory.yml` and `vars.yml` files using the provided samples. Assuming you have your host is compatible with Ansible already (has SSH public key installed and has a python interpreter), then run:
 
 ```bash
-ansible-playbook -i inventory.yml main.yml
+ansible-playbook main.yml
 ```
 
 ## Removing users + backups
@@ -15,8 +15,7 @@ ansible-playbook -i inventory.yml main.yml
 If you need to remove users **and data**, a separate playbook is available, which must be invoked with the user to remove:
 
 ```bash
-ansible-playbook -i inventory.yml remove_users.yml \
-  --extra-vars "decomissioned_username=my_old_user"
+ansible-playbook remove_users.yml -e "decomissioned_username=my_old_user"
 ```
 
 ## Further reading
