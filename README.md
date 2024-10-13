@@ -2,6 +2,8 @@
 
 This playbook configures a host for use as a networked Time Machine backup target. It sets up a Samba share for holding backups, and configures Avahi to advertise the share to any macOS clients on the network.
 
+I've written a little bit more about how it sets things up [in a post here](https://josh.pencheon.dev/2024/10/13/setting-up-network-time-machine-target.html).
+
 ## Using the main playbook
 
 First, set up `inventory.yml` and `vars.yml` files using the provided samples. Assuming you have your host is compatible with Ansible already (has SSH public key installed and has a python interpreter), then run:
